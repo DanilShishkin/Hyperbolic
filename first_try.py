@@ -12,6 +12,7 @@ class Hyperbolic(object):
         self.y0 = y0
         self.length = length
 
+        
     @property
     def z0(self):  # вычисление z, чтобы она точно лежала на поверхности
         return ((self.x0 ** 2) + (self.y0 ** 2) + 1) ** (1 / 2)
