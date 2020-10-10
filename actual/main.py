@@ -21,6 +21,7 @@ class Hyperbolic:
         self.point_coordinates[0] = tuple([0] * self.dimension + [1])
         for i in range(len(self.point_coordinates)):
             self.__find_coordinates(i)
+        print(*self.point_coordinates)
 
     def __find_coordinates(self, point_num):
         """
@@ -52,9 +53,9 @@ class Hyperbolic:
         :param coords: координаты точки, для которой необходимо вычислить проекцию
         :return: возвращает вычисленные координаты
         """
-        last = ((sum(coords[:self.dimension])) + 1)**0.5
+        last = (sum(((coords[:self.dimension])**2)) + 1)**0.5
         return tuple([coords[i] for i in range(self.dimension)] + [last])
 
 
-# G = ((0, 1, 0), (1, 0, 1), (0, 1, 0), (1, 1, 1))  # Тестовый случай, просто две связанные между собой точки
-# a = Hyperbolic(G, 3)  # Вызываем конструктор класса
+G = ((0, 1, 0), (1, 0, 1), (0, 1, 0), (1, 1, 1))  # Тестовый случай, просто две связанные между собой точки
+a = Hyperbolic(G, 3)  # Вызываем конструктор класса
