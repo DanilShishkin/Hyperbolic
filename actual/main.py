@@ -16,36 +16,36 @@ class Hyperbolic:
         и будут вычислены координаты всех точек графа, перенесённых в гиперболическое пространство point_coordinates.
         """
         self.graph = graph
-        self.dimension = dimension
-        self.point_coordinates = list([0] * len(self.graph[0]))
-        self.point_coordinates[0] = tuple([0] * self.dimension + [1])
-        for i in range(len(self.point_coordinates)):
-            self.__find_coordinates(i)
-        print(*self.point_coordinates)
+        self.dimension = dimension # тут мы записали переданные данные
+        self.point_coordinates = list([0] * len(self.graph[0])) # заполнили все координаты точек нулями временно
+        self.point_coordinates[0] = list([0] * self.dimension + [1]) # нулевую точку поместили в (0,....., 0, 1)
+        # тут нужно коротко или отдельным методом написать обход графа
 
     def __find_coordinates(self, point_num):
         """
         Функция предназначена для поиска координат всех точек, смежных с переданной и не вычисленных ранее.
-        Поэтому в конструкторе передаются все точки в порядке возрастания,
-        а вычисляются точки с номером не менее переданного.
+        ВАЖНО, ЧТОБЫ КООРДИНАТЫ ТОЧКИ point_num БЫЛИ ВЫЧИСЛЕНЫ К ЭТОМУ МОМЕНТУ
         :param point_num: номер точки, для которой будут вычислены координаты смежных
         :return: ничего не возвращает, в ходе своей работы записывает вычисленные координаты в point_coordinates
         """
-        for j in range(point_num + 1, len(self.point_coordinates)):
+        # нужно переписать метод так, чтобы он проверял, связаны ли точки. Возможно тут так же придётся записывать в
+        # отдельную структуру данных точки, которые уже были обработаны
+        j: int
+        for j in range(point_num + 1, len(self.point_coordinates)): # цикл возможно тоже надо переписать
             # тут нужно будет организовать проверку того, являются ли точки смежными.
-            v = self.__rand_vector()
-            magic = v  # тут когда-нибудь произойдёт магия с вычислением координат точки
-            # на данный момент вместо нужных точек вычисляется точка, заданная проекциями рандомных радиус-векторов
-            self.point_coordinates[j] = self.__projection(magic)
+             if self.graph[point_num][j] != 0:
+                v = self.__rand_vector() # это я перепишу и вектор будет гарантированно принадлежать касательному подпространству
+                self.point_coordinates[j] = self.__integral(self,point_num, j) # хз что тут не так, но запись координат я починю
 
-    def __rand_vector(self):
+    def __rand_vector(self): # это я напишу
         """
         вычисляет рандомный вектор размерности n+1, т.к. модель пространства имеет размерность на 1 больше, чем исходное
+        такой что он принадлежит касательному подпространству
         :return: возвращает вычисленный вектор
         """
         return np.random.random_sample(self.dimension + 1)
 
-    def __projection(self, coords):
+    def __projection(self, coords: list) -> list: # скорее всего это не понадобится, думаю удалим
         """
         (в идеале)Вычисляет проекцию точки на n-мерное гиперболическое пространство
         (на данный момент вычисляет последнюю координату таким образом, чтобы, не изменяя остальные,
@@ -54,7 +54,11 @@ class Hyperbolic:
         :return: возвращает вычисленные координаты
         """
         last = (sum(((coords[:self.dimension])**2)) + 1)**0.5
-        return tuple([coords[i] for i in range(self.dimension)] + [last])
+        return list([coords[i] for i in range(self.dimension)] + [last])
+
+    def __integral(self, p1, p2): # это я напишу, будет возвращать координаты вычисленной точки
+
+
 
 
 G = ((0, 1, 0), (1, 0, 1), (0, 1, 0), (1, 1, 1))  # Тестовый случай, просто две связанные между собой точки
