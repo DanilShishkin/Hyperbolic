@@ -20,12 +20,10 @@ class Hyperbolic:
         """
         self.graph = graph
         self.dimension = dimension  # тут мы записали переданные данные
-<<<<<<< HEAD
         self.point_coordinates = np.zeros((len(graph), self.dimension + 1))
         self.point_coordinates[0][dimension] = 1
         self.vert_dict = nx.from_numpy_array(graph)
         self.check = np.zeros(len(self.graph), dtype=int) 
-
         self.__find_coordinates(0)
         # тут нужно коротко или отдельным методом написать обход графа
 
@@ -36,11 +34,6 @@ class Hyperbolic:
                 print(*self.__integral(self.__rand_vector(current), current, child))
                 self.check[child] = 1
                 self.__recursive(child)
-=======
-        self.point_coordinates = np.zeros((len(graph), dimension + 1), dtype=int)
-        self.point_coordinates[0][dimension] = 1
-        self.vert_dict = nx.from_numpy_array(graph)
->>>>>>> 59797f12395709e5cd231d4b0b0104e4dd1aa4be
 
         # тут нужно коротко или отдельным методом написать обход графа
 
@@ -50,12 +43,9 @@ class Hyperbolic:
         ВАЖНО, ЧТОБЫ КООРДИНАТЫ ТОЧКИ point_num БЫЛИ ВЫЧИСЛЕНЫ К ЭТОМУ МОМЕНТУ
         :return: ничего не возвращает, в ходе своей работы записывает вычисленные координаты в point_coordinates
         """
-<<<<<<< HEAD
         self.__recursive(0)
-=======
         check = np.zeros(len(self.graph))
         self.__recursive(0, check)
->>>>>>> 59797f12395709e5cd231d4b0b0104e4dd1aa4be
 
     def __recursive(self, current, check):
         for child in self.vert_dict[current]:
@@ -140,10 +130,7 @@ class Hyperbolic:
         return ans
 
 
-<<<<<<< HEAD
 
 a = Hyperbolic(np.array([[0, 1, 1], [1, 0, 0], [1, 0, 0]]), 3)
 print(*a.point_coordinates)
-=======
 Hyperbolic(np.array([[0, 1], []]), 3)
->>>>>>> 59797f12395709e5cd231d4b0b0104e4dd1aa4be
