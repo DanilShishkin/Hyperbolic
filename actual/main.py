@@ -1,7 +1,6 @@
-#!/usr/bin/python3
+import networkx as nx
 import numpy as np
 import math
-import networkx as nx
 
 
 class Hyperbolic:
@@ -21,29 +20,27 @@ class Hyperbolic:
         """
         self.graph = graph
         self.dimension = dimension  # тут мы записали переданные данные
-        self.point_coordinates = np.zeros((len(graph), dimension + 1))
+        self.point_coordinates = np.zeros((len(graph), dimension + 1), dtype=int)
         self.point_coordinates[0][dimension] = 1
         self.vert_dict = nx.from_numpy_array(graph)
+
         # тут нужно коротко или отдельным методом написать обход графа
 
-    def __recursive(current, check):
-        for child in vert_dict[current]:
-            if not check[child]:
-                #считаем расстояние
-                check[child] = 1
-                recursive(child)
-
-
-    def __find_coordinates(self, point_num):
+    def __find_coordinates(self):
         """
         Функция предназначена для поиска координат всех точек, смежных с переданной и не вычисленных ранее.
         ВАЖНО, ЧТОБЫ КООРДИНАТЫ ТОЧКИ point_num БЫЛИ ВЫЧИСЛЕНЫ К ЭТОМУ МОМЕНТУ
-        :param point_num: номер точки, для которой будут вычислены координаты смежных
         :return: ничего не возвращает, в ходе своей работы записывает вычисленные координаты в point_coordinates
         """
-        check = np.zeros(len(graph))
-        recursive(0, check)   
+        check = np.zeros(len(self.graph))
+        self.__recursive(0, check)
 
+    def __recursive(self, current, check):
+        for child in self.vert_dict[current]:
+            if not check[child]:
+                # считаем расстояние
+                check[child] = 1
+                self.__recursive(child)
 
     def __rand_vector(self, point: int) -> list:
         """
@@ -121,4 +118,4 @@ class Hyperbolic:
         return ans
 
 
-Hyperbolic(np.array([[0, 1], []]))
+Hyperbolic(np.array([[0, 1], []]), 3)
