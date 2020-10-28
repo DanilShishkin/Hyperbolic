@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 import networkx as nx
 import numpy as np
 import math
@@ -9,6 +10,7 @@ class Hyperbolic:
     """
 
     def __init__(self, graph, dimension):
+        
         """
         Конструктор класса
         :param graph: на данный момент является матрицей смежности графа, в будущем может быть изменено для работы с
@@ -24,7 +26,7 @@ class Hyperbolic:
         self.point_coordinates[0][dimension] = 1
         self.vert_dict = nx.from_numpy_array(graph)
         self.check = np.zeros(len(self.graph), dtype=int) 
-        self.__find_coordinates(0)
+        self.__find_coordinates()
         # тут нужно коротко или отдельным методом написать обход графа
 
     def __recursive(self, current):
@@ -45,14 +47,7 @@ class Hyperbolic:
         """
         self.__recursive(0)
         check = np.zeros(len(self.graph))
-        self.__recursive(0, check)
-
-    def __recursive(self, current, check):
-        for child in self.vert_dict[current]:
-            if not check[child]:
-                # считаем расстояние
-                check[child] = 1
-                self.__recursive(child)
+        self.__recursive(0)
 
     def __rand_vector(self, point: int) -> list:
         """
@@ -116,7 +111,7 @@ class Hyperbolic:
         for i in range(self.dimension):
             d += p1[i] ** 2 - p2[i] ** 2
         d -= p1[self.dimension] ** 2 - p2[self.dimension] ** 2
-        return math.sqrt(d)
+        return math.sqrt(abs(d))
 
     def __current_coordinates(self, v: list, t: float, start_point: int) -> list:
         """
@@ -133,4 +128,3 @@ class Hyperbolic:
 
 a = Hyperbolic(np.array([[0, 1, 1], [1, 0, 0], [1, 0, 0]]), 3)
 print(*a.point_coordinates)
-Hyperbolic(np.array([[0, 1], []]), 3)
