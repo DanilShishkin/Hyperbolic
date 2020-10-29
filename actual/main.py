@@ -45,8 +45,7 @@ class Hyperbolic:
         ВАЖНО, ЧТОБЫ КООРДИНАТЫ ТОЧКИ point_num БЫЛИ ВЫЧИСЛЕНЫ К ЭТОМУ МОМЕНТУ
         :return: ничего не возвращает, в ходе своей работы записывает вычисленные координаты в point_coordinates
         """
-        self.__recursive(0)
-        check = np.zeros(len(self.graph))
+        self.check[0] = 1
         self.__recursive(0)
 
     def __rand_vector(self, point: int) -> list:
