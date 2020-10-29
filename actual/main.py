@@ -1,4 +1,3 @@
-#!/usr/bin/python3
 import networkx as nx
 import numpy as np
 import math
@@ -10,7 +9,7 @@ class Hyperbolic:
     """
 
     def __init__(self, graph, dimension):
-        
+
         """
         Конструктор класса
         :param graph: на данный момент является матрицей смежности графа, в будущем может быть изменено для работы с
@@ -23,21 +22,15 @@ class Hyperbolic:
         self.graph = graph
         self.dimension = dimension  # тут мы записали переданные данные
         self.point_coordinates = np.zeros((len(graph), self.dimension + 1))
-        self.point_coordinates[0][dimension] = 1
         self.vert_dict = nx.from_numpy_array(graph)
-        self.check = np.zeros(len(self.graph), dtype=int) 
         self.__find_coordinates()
-        # тут нужно коротко или отдельным методом написать обход графа
 
-    def __recursive(self, current):
+    def __recursive(self, current, check):
         for child in self.vert_dict[current]:
-            if not self.check[child]:
-                #считаем расстояние
-                print(*self.__integral(self.__rand_vector(current), current, child))
-                self.check[child] = 1
-                self.__recursive(child)
-
-        # тут нужно коротко или отдельным методом написать обход графа
+            if not check[child]:
+                self.point_coordinates[child] = self.__integral(self.__rand_vector(current), current, child)
+                check[child] = 1
+                self.__recursive(child, check)
 
     def __find_coordinates(self):
         """
@@ -45,8 +38,10 @@ class Hyperbolic:
         ВАЖНО, ЧТОБЫ КООРДИНАТЫ ТОЧКИ point_num БЫЛИ ВЫЧИСЛЕНЫ К ЭТОМУ МОМЕНТУ
         :return: ничего не возвращает, в ходе своей работы записывает вычисленные координаты в point_coordinates
         """
-        self.check[0] = 1
-        self.__recursive(0)
+        self.point_coordinates[0][self.dimension] = 1
+        check = np.zeros(len(self.graph), dtype=int)
+        check[0] = 1
+        self.__recursive(0, check)
 
     def __rand_vector(self, point: int) -> list:
         """
@@ -91,7 +86,7 @@ class Hyperbolic:
         t = 0
         dt = 0.000001
         ans = self.point_coordinates[p1]
-        while integral < distance:
+        while integral < distance**2:
             t += dt
             new_ans = self.__current_coordinates(v, t, p1)
             integral += self.__distance(ans, new_ans)
@@ -110,7 +105,7 @@ class Hyperbolic:
         for i in range(self.dimension):
             d += p1[i] ** 2 - p2[i] ** 2
         d -= p1[self.dimension] ** 2 - p2[self.dimension] ** 2
-        return math.sqrt(abs(d))
+        return d
 
     def __current_coordinates(self, v: list, t: float, start_point: int) -> list:
         """
@@ -124,6 +119,5 @@ class Hyperbolic:
         return ans
 
 
-
-a = Hyperbolic(np.array([[0, 1, 1], [1, 0, 0], [1, 0, 0]]), 3)
+a = Hyperbolic(np.array([[0, 1, 10], [1, 0, 0], [10, 0, 0]]), 2)
 print(*a.point_coordinates)
