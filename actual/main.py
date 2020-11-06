@@ -5,7 +5,8 @@ import numpy as np
 
 class Hyperbolic:
     """
-    Класс для работы с гиперболическим пространством. На данный момент не имеет публичных методов, кроме конструктора.
+    Класс для работы с гиперболическим пространством.
+    На данный момент не имеет публичных методов, кроме конструктора.
     """
 
     def __init__(self, graph: np.ndarray, dimension: int):
@@ -15,11 +16,11 @@ class Hyperbolic:
         в конце работы конструктора
         так же создаёт словарь связей координат для удобства работы
         """
+        print(graph)
         self.graph = graph
         self.dimension = dimension
         self.point_coordinates = np.zeros((len(graph), self.dimension + 1))
         self.vert_dict = nx.from_numpy_array(graph)
-        print(graph)
         self.__find_coordinates()
 
     def __recursive(self, current: int, check: np.array):
