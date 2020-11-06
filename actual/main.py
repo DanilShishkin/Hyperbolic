@@ -29,7 +29,8 @@ class Hyperbolic:
         """
         for child in self.vert_dict[current]:
             if not check[child]:
-                self.point_coordinates[child] = self.__integral(self.__rand_vector(current), current, child)
+                v = self.__rand_vector(current)
+                self.point_coordinates[child] = self.__integral(v, current, child)
                 check[child] = 1
                 self.__recursive(child, check)
 
@@ -50,7 +51,17 @@ class Hyperbolic:
         пока я заменил это всё заглушкой. Она будет работать, но только с теми входными данными,
         где все точки связаны только с нулевой.
         """
-        return np.array([1 + point, 1, 0])
+        ans = np.random.random_sample(self.dimension + 1)
+        xn = 0
+        for i in range(self.dimension):
+            xn += self.point_coordinates[point][i] * (ans[i] - self.point_coordinates[point][i])
+        xn /= self.point_coordinates[point][self.dimension]
+        xn += self.point_coordinates[point][self.dimension]
+        ans[self.dimension] = xn
+        for i in range(self.dimension + 1):
+            ans[i] -= self.point_coordinates[point][i]
+        return ans
+
 
     def __integral(self, v: np.array, p1: int, p2: int) -> np.array:
         """
@@ -60,9 +71,9 @@ class Hyperbolic:
         distance = self.graph[p1][p2]
         integral = 0
         t = 0
-        dt = 0.0001
+        dt = 0.001
         ans = self.point_coordinates[p1]
-        while integral < distance ** 2:  # пока что мы считаем, что расстояние может быть комплексным
+        while integral < distance:  # пока что мы считаем, что расстояние может быть комплексным
             # и сравниваем сумму квадратов элементарных расстояний с квадратом заданной дистанции.
             # Есть подозрение, что это неправда и необходимо как-то пофиксить данную часть
             t += dt
@@ -78,9 +89,9 @@ class Hyperbolic:
         """
         d = 0
         for i in range(self.dimension):
-            d += p1[i] ** 2 - p2[i] ** 2
-        d -= p1[self.dimension] ** 2 - p2[self.dimension] ** 2
-        return d  # по-хорошему расстоянием является корень этого значения,
+            d += (p2[i] - p1[i])**2
+        d -= (p2[self.dimension] - p1[self.dimension])**2
+        return np.sqrt(d)  # по-хорошему расстоянием является корень этого значения,
         # но он иногда отрицательный по неизвестным причинам
 
     def __current_coordinates(self, v: np.array, t: float, start_point: int) -> np.array:
@@ -90,23 +101,15 @@ class Hyperbolic:
         n_v = sum(map(lambda i: i * i, v))  # FIXME
         # мне не очень нравится, что я сначала прибавляю квадрат числа, а потом
         # дважды вычитаю его. Может знаете, как это пофиксить?
-        n_v = math.sqrt(math.fabs(n_v - 2 * (v[self.dimension]) ** 2))
+        n_v = math.sqrt(n_v - 2 * (v[self.dimension]) ** 2)
         ans1 = np.array([math.cosh(n_v * t) * p for p in self.point_coordinates[start_point]])
         ans2 = np.array([math.sinh(n_v * t) / n_v * vi for vi in v])
         return ans1 + ans2
 
-    def __projection(self, coords: list) -> list:  # скорее всего это не понадобится, думаю удалим
-        """
-        Кажется, что оно нам вряд ли понадобиться, но пусть пока тут лежит
-        (в идеале)Вычисляет проекцию точки на n-мерное гиперболическое пространство
-        (на данный момент вычисляет последнюю координату таким образом, чтобы, не изменяя остальные,
-         сделать точку принадлежащей гиперболическому пространству.)
-        :param coords: координаты точки, для которой необходимо вычислить проекцию
-        :return: возвращает вычисленные координаты
-        """
-        last = (sum(((coords[:self.dimension]) ** 2)) + 1) ** 0.5
-        return list([coords[i] for i in range(self.dimension)] + [last])
 
 
-a = Hyperbolic(np.array([[0, 10, 1], [10, 0, 0], [1, 0, 0]]), 2)
+
+a = Hyperbolic(np.array([[0, 2, 1], [2, 0, 0], [1, 0, 0]]), 2)
 print(*a.point_coordinates)
+
+
