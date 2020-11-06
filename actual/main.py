@@ -51,7 +51,7 @@ class Hyperbolic:
         пока я заменил это всё заглушкой. Она будет работать, но только с теми входными данными,
         где все точки связаны только с нулевой.
         """
-        ans = np.random.random_sample(self.dimension + 1)
+        ans = 100 * np.random.uniform(-100, 100, self.dimension + 1)  # -100 и 100 границы генерируемых чисел
         xn = 0
         for i in range(self.dimension):
             xn += self.point_coordinates[point][i] * (ans[i] - self.point_coordinates[point][i])
@@ -62,7 +62,6 @@ class Hyperbolic:
             ans[i] -= self.point_coordinates[point][i]
         return ans
 
-
     def __integral(self, v: np.array, p1: int, p2: int) -> np.array:
         """
         считаем интеграл самым простым способом, просто двигаясь вдоль линии с малым шагом. Возвращает найденные
@@ -71,7 +70,7 @@ class Hyperbolic:
         distance = self.graph[p1][p2]
         integral = 0
         t = 0
-        dt = 0.001
+        dt = 0.0001
         ans = self.point_coordinates[p1]
         while integral < distance:  # пока что мы считаем, что расстояние может быть комплексным
             # и сравниваем сумму квадратов элементарных расстояний с квадратом заданной дистанции.
@@ -107,9 +106,5 @@ class Hyperbolic:
         return ans1 + ans2
 
 
-
-
-a = Hyperbolic(np.array([[0, 2, 1], [2, 0, 0], [1, 0, 0]]), 2)
+a = Hyperbolic(np.array([[0, 10, 7], [10, 0, 0], [7, 0, 0]]), 3)
 print(*a.point_coordinates)
-
-
