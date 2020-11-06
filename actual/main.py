@@ -37,7 +37,6 @@ class Hyperbolic:
     def __find_coordinates(self):
         """
         Функция предназначена для поиска координат всех точек, смежных с переданной и не вычисленных ранее.
-        ВАЖНО, ЧТОБЫ КООРДИНАТЫ ТОЧКИ point_num БЫЛИ ВЫЧИСЛЕНЫ К ЭТОМУ МОМЕНТУ
         """
         self.point_coordinates[0][self.dimension] = 1
         check = np.zeros(len(self.graph), dtype=int)
@@ -47,9 +46,7 @@ class Hyperbolic:
     def __rand_vector(self, point: int) -> np.ndarray:
         """
         это функция должна возвращать случайный вектор,
-        который находится в касательном подпространстве в точке point_coordinates[point]
-        пока я заменил это всё заглушкой. Она будет работать, но только с теми входными данными,
-        где все точки связаны только с нулевой.
+        который находится в касательном подпространстве в точке point_coordinates[point].
         """
         ans = 100 * np.random.uniform(-100, 100, self.dimension + 1)  # -100 и 100 границы генерируемых чисел
         xn = 0
@@ -72,9 +69,7 @@ class Hyperbolic:
         t = 0
         dt = 0.0001
         ans = self.point_coordinates[p1]
-        while integral < distance:  # пока что мы считаем, что расстояние может быть комплексным
-            # и сравниваем сумму квадратов элементарных расстояний с квадратом заданной дистанции.
-            # Есть подозрение, что это неправда и необходимо как-то пофиксить данную часть
+        while integral < distance:
             t += dt
             new_ans = self.__current_coordinates(v, t, p1)
             integral += self.__distance(ans, new_ans)
@@ -84,14 +79,12 @@ class Hyperbolic:
     def __distance(self, p1: np.array, p2: np.array) -> float:
         """
         ищет расстояние между двумя точками в терминах нашей метрики.
-        считаем, что расстояние мало и так делать действительно можно.
         """
         d = 0
         for i in range(self.dimension):
             d += (p2[i] - p1[i])**2
         d -= (p2[self.dimension] - p1[self.dimension])**2
-        return np.sqrt(d)  # по-хорошему расстоянием является корень этого значения,
-        # но он иногда отрицательный по неизвестным причинам
+        return np.sqrt(d)
 
     def __current_coordinates(self, v: np.array, t: float, start_point: int) -> np.array:
         """
