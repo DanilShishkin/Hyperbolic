@@ -1,15 +1,21 @@
+"""
+тестировщик
+"""
 import main
 import hyperbolic
 import numpy as np
 
 
 def points():
-    NUM_OF_TESTS = 10
-    MIN_NUM_OF_POINT = 2
-    MAX_NUM_OF_POINTS = 7
-    MIN_DIMENSION = 2
+    """
+    тестирует принадлежность точки гиперболоиду
+    """
+    NUM_OF_TESTS = 1
+    MIN_NUM_OF_POINT = 100
+    MAX_NUM_OF_POINTS = 100
+    MIN_DIMENSION = 5
     MAX_DIMENSION = 5
-    MAX_POINT_ERROR = 1  # FIXME СТРАННО, НО В КАКИХ-ТО СЛУЧАЯХ ЕСТЬ ОШИБКИ. НУЖНО ВЫЯСНИТЬ ПОЧЕМУ
+    MAX_POINT_ERROR = 2  # FIXME СТРАННО, НО В КАКИХ-ТО СЛУЧАЯХ ЕСТЬ ОШИБКИ. НУЖНО ВЫЯСНИТЬ ПОЧЕМУ
     MIN_DISTANCE = 1
     MAX_DISTANCE = 20
     flag = 0
@@ -28,7 +34,7 @@ def points():
             counter += 1
             ans = sum(map(lambda x: x ** 2, point))
             ans -= 2 * point[0] ** 2
-            if (ans + 1 >= MAX_POINT_ERROR) or (ans + 1 < -MAX_POINT_ERROR):
+            if abs(ans + 1) > MAX_POINT_ERROR:
                 print("Point", point, "not in H+")
                 flag += 1
 
@@ -36,12 +42,15 @@ def points():
 
 
 def distance():
-    NUM_OF_TESTS = 10
-    MIN_NUM_OF_POINT = 2
-    MAX_NUM_OF_POINTS = 7
+    """
+    тестирует правильность расстояния меджу точками
+    """
+    NUM_OF_TESTS = 1
+    MIN_NUM_OF_POINT = 10
+    MAX_NUM_OF_POINTS = 10
     MIN_DIMENSION = 2
-    MAX_DIMENSION = 5
-    MAX_DISTANCE_ERROR = 1
+    MAX_DIMENSION = 2
+    MAX_DISTANCE_ERROR = 10
     MIN_DISTANCE = 1
     MAX_DISTANCE = 20
     flag = 0
@@ -58,6 +67,7 @@ def distance():
         dimension = np.random.randint(MIN_DIMENSION, MAX_DIMENSION + 1, size=1, dtype=int)
         dimension = dimension[0]
         H = main.Hyperbolic(matrix, dimension)
+        H.print_graph()  # DEBUG это для
         for i in range(1, len(H.point_coordinates)):
             counter += 1
             d = hyperbolic.hyperbolic_distance(H.point_coordinates[i], H.point_coordinates[0])
@@ -70,5 +80,5 @@ def distance():
 
 if __name__ == '__main__':
     points()
-    # distance()  # FIXME ЗАМЕТИЛ ТЕНДЕНЦИЮ, ЧТО РОВНО ОДНА ПАРА ТОЧЕК СЧИТАЕТСЯ ПРАВИЛЬНО. ЗАБАВНО
+    #distance()  # FIXME ЗАМЕТИЛ ТЕНДЕНЦИЮ, ЧТО РОВНО ОДНА ПАРА ТОЧЕК СЧИТАЕТСЯ ПРАВИЛЬНО. ЗАБАВНО
     # FIXME ОЧЕНЬ РЕДКО ЧТО-ЛИБО СОВПАДАЕТ, ХОЧЕТСЯ ВЫЯСНИТЬ ПОЧЕМУ

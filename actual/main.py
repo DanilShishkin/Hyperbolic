@@ -1,6 +1,11 @@
+"""
+главная функци с классом Hyperbolic
+"""
+
 import networkx as nx
 import numpy as np
 import hyperbolic
+import draw
 
 
 class Hyperbolic:
@@ -21,6 +26,7 @@ class Hyperbolic:
         self.point_coordinates = np.zeros((len(graph), self.dimension + 1))
         self.vert_dict = nx.from_numpy_array(graph)
         self.__find_coordinates()
+        print("OK")
 
     def __find_coordinates(self):
         """
@@ -59,3 +65,37 @@ class Hyperbolic:
             integral += hyperbolic.distance_pseudo_euclidean(ans, new_ans)
             ans = new_ans
         return ans  # если я ничего не путаю, то это первая точка, для которой расстояние больше заданного
+
+    def print_graph(self, colour):
+        draw.printing(self.vert_dict, hyperbolic.projection(self.point_coordinates), colour)
+
+
+matrix = np.array([[0, 3, 2, 5, 0, 0, 0, 0, 0, 0],
+                   [3, 0, 0, 0, 8, 6, 0, 0, 0, 0],
+                   [2, 0, 0, 0, 0, 0, 1, 2, 0, 0],
+                   [5, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                   [0, 8, 0, 0, 0, 0, 0, 0, 0, 0],
+                   [0, 6, 0, 0, 0, 0, 0, 0, 1, 2],
+                   [0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
+                   [0, 0, 2, 0, 0, 0, 0, 0, 0, 0],
+                   [0, 0, 0, 0, 0, 1, 0, 0, 0, 0],
+                   [0, 0, 0, 0, 0, 2, 0, 0, 0, 0]])
+dimension = 2
+"""
+H0 = Hyperbolic(matrix, dimension)
+H0.print_graph('green')
+H1 = Hyperbolic(matrix, dimension)
+H1.print_graph('red')
+H2 = Hyperbolic(matrix, dimension)
+H2.print_graph('yellow')
+H3 = Hyperbolic(matrix, dimension)
+H3.print_graph('blue')
+"""
+matrix2 = np.array([[0, 5, 0, 0, 0, 0],
+                    [5, 0, 5, 0, 0, 0],
+                    [0, 5, 0, 5, 0, 0],
+                    [0, 0, 5, 0, 5, 0],
+                    [0, 0, 0, 5, 0, 5],
+                    [0, 0, 0, 0, 5, 0]])
+H = Hyperbolic(matrix2, dimension)
+H.print_graph('red')

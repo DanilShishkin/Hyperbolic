@@ -48,6 +48,9 @@ def exponential_map(start_point: np.array, v: np.array, t: float) -> np.array:
     nv = norm(v)
     ans1 = np.array([cosh(nv * t) * p for p in start_point])
     ans2 = np.array([sinh(nv * t) / nv * vi for vi in v])
+    # TODO сделать проекцию
+    # TODO проверить, как двигаются точки в зависимости от шага t
+    # TODO предположим, что на графе метрика
     return ans1 + ans2
 
 
@@ -65,3 +68,11 @@ def rand_vector(point: np.array) -> np.array:
         x0 += point[i] * (ans[i] - point[i])
     ans[0] = x0 / point[0]
     return ans
+
+
+def projection(coordinates):
+    proj = np.zeros((len(coordinates), len(coordinates[0])))
+    for i in range(len(coordinates)):
+        for j in range(len(coordinates[0]) - 1):
+            proj[i][j] = coordinates[i][j+1] / coordinates[i][0] * 200
+    return proj
