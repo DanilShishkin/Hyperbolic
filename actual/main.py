@@ -48,26 +48,37 @@ class Hyperbolic:
                 check[child] = 1
                 self.__recursive(child, check)
 
-    def __integral(self, p1: int, p2: int) -> np.array:
+    def __integral(self, p1: int, p2: int, eps=1e-1) -> np.array:
         """
-        считаем интеграл самым простым способом, просто двигаясь вдоль линии с малым шагом. Возвращает найденные
-        координаты точки p2, но на самом деле момжно записать их в нужную ячейку прямо в этом методе, если понадобится
         """
         distance = self.vert_dict[p1][p2]["weight"]
         v = hyperbolic.rand_vector(self.point_coordinates[p1])
-        integral = 0
-        t = 0
-        dt = 0.00001
+        integral = 0.0  # расстояние на гиперболоиде
+        t = 0.001
         ans = self.point_coordinates[p1]
-        while integral < distance:
-            t += dt
-            new_ans = hyperbolic.exponential_map(self.point_coordinates[p1], v, t)
-            integral += hyperbolic.distance_pseudo_euclidean(ans, new_ans)
-            ans = new_ans
-        return ans  # если я ничего не путаю, то это первая точка, для которой расстояние больше заданного
+
+        while abs(distance - integral) > eps:
+            t *= 2
+            new_ans = hyperbolic.exponential_map(
+                self.point_coordinates[p1], v, t)
+            cur_dist = hyperbolic.distance_pseudo_euclidean(ans, new_ans)
+
+            if integral + cur_dist > distance:
+                t = t / 2 + 0.0001
+                new_ans = hyperbolic.exponential_map(
+                    self.point_coordinates[p1], v, t)
+                cur_dist = hyperbolic.distance_pseudo_euclidean(ans, new_ans)
+                integral += cur_dist
+                ans = new_ans
+                continue
+            else:
+                integral += cur_dist
+                ans = new_ans
+        return ans
 
     def print_graph(self, colour):
-        draw.printing(self.vert_dict, hyperbolic.projection(self.point_coordinates), colour)
+        draw.printing(self.vert_dict, hyperbolic.projection(
+            self.point_coordinates), colour)
 
 
 matrix = np.array([[0, 3, 2, 5, 0, 0, 0, 0, 0, 0],
@@ -97,5 +108,7 @@ matrix2 = np.array([[0, 5, 0, 0, 0, 0],
                     [0, 0, 5, 0, 5, 0],
                     [0, 0, 0, 5, 0, 5],
                     [0, 0, 0, 0, 5, 0]])
+H = Hyperbolic(matrix2, dimension)
+H.print_graph('red')
 H = Hyperbolic(matrix2, dimension)
 H.print_graph('red')
