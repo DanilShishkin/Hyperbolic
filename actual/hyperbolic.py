@@ -5,28 +5,26 @@ from math import sinh, cosh, sqrt
 import numpy as np
 
 
-def scalar_product(v1: np.array, v2: np.array) -> float:
+def scalar_product(point_1: np.array, point_2: np.array) -> float:
     """
     ищет скалярное произведение векторов в R(n+1)
     Необходимо передавать массивы одинаковой размерности.
     """
-    assert len(v1) == len(v2)
-    dimension = len(v1)
-    ans = (v1[0] - v2[0]) ** 2
-    for i in range(1, dimension):
-        ans += (v2[i] - v1[i]) ** 2
-    return ans
+    ans = point_1*point_2
+    ans[0] = -ans[0]
+    return ans.sum()
 
 
 def norm(v: np.array) -> float:
     """
     ищет норму вектора в R(n+1)
     """
-    return sqrt(scalar_product(v, np.zeros(len(v))))
+    return sqrt(scalar_product(v, v))
 
 
 def distance_pseudo_euclidean(v1: np.array, v2: np.array) -> float:
     """
+    фигня
     ищет расстояние между точкам в R(n+1)
     """
     return sqrt(scalar_product(v1, v2))
@@ -37,7 +35,7 @@ def hyperbolic_distance(p1: np.array, p2: np.array) -> float:
     ищет расстояние между двумя точками в H(n)
     Необходимо передавать массивы одинаковой размерности
     """
-    return np.arccosh(scalar_product(p1, p2))
+    return np.arccosh(-scalar_product(p1, p2))
 
 
 def exponential_map(start_point: np.array, v: np.array, t: float) -> np.array:
@@ -45,12 +43,9 @@ def exponential_map(start_point: np.array, v: np.array, t: float) -> np.array:
     вычисляет координаты точки. Стартовая точка - start_point, вектора направления в старотовой точке - v
     t - параметр, от которого зависит лишь расстояние между точками
     """
-    nv = norm(v)
-    ans1 = np.array([cosh(nv * t) * p for p in start_point])
-    ans2 = np.array([sinh(nv * t) / nv * vi for vi in v])
-    # TODO сделать проекцию
-    # TODO проверить, как двигаются точки в зависимости от шага t
-    # TODO предположим, что на графе метрика
+    nv = np.linalg.norm(v)
+    ans1 = np.cosh(nv * t) * start_point
+    ans2 = np.sinh(nv * t) / nv * v
     return ans1 + ans2
 
 
@@ -75,4 +70,5 @@ def projection(coordinates):
     for i in range(len(coordinates)):
         for j in range(len(coordinates[0]) - 1):
             proj[i][j] = coordinates[i][j+1] / coordinates[i][0] * 200
+            # 200 - размер графа относительно круга
     return proj

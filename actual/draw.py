@@ -14,13 +14,14 @@ class Example(Frame):
         canvas.create_oval(0, 800, 800, 0)
         for i in range(len(coord)):
             canvas.create_oval(
-                400 + coord[i][0] - 5, 400 + coord[i][1] + 5, 400 + coord[i][0] + 5, 400 + coord[i][1] - 5,
+                400 + coord[i][0] - 5, 400 + coord[i][1] +
+                5, 400 + coord[i][0] + 5, 400 + coord[i][1] - 5,
                 outline=colour, fill=colour, width=1
             )
-        for current in vert_dict:
-            for child in vert_dict[current]:
-                canvas.create_line(400 + coord[current][0], 400 + coord[current][1],
-                                   400 + coord[child][0], 400 + coord[child][1])
+        # for current in vert_dict:
+        #     for child in vert_dict[current]:
+        #         canvas.create_line(400 + coord[current][0], 400 + coord[current][1],
+        #                            400 + coord[child][0], 400 + coord[child][1])
         canvas.pack(fill=BOTH, expand=1)
 
 

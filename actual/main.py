@@ -6,6 +6,7 @@ import networkx as nx
 import numpy as np
 import hyperbolic
 import draw
+from grad_descent import GD
 
 
 class Hyperbolic:
@@ -21,16 +22,21 @@ class Hyperbolic:
         в конце работы конструктора
         так же создаёт словарь связей координат для удобства работы
         """
-        # print(graph)  # FIXME DEBUG
         self.dimension = dimension
         self.point_coordinates = np.zeros((len(graph), self.dimension + 1))
         self.vert_dict = nx.from_numpy_array(graph)
-        self.__find_coordinates()
-        print("OK")
+        self.__find_coordinates()  # изменяет координаты точек на гиперболоиде
+        print(graph)
+        print(self.point_coordinates)
+        for vertex in range(graph.shape[0]):
+            self.point_coordinates[vertex, 0] = np.sqrt(
+                1 + sum(self.point_coordinates[vertex, 1::]**2))
+        self.point_coordinates = GD(self.point_coordinates, graph, 100)
 
     def __find_coordinates(self):
         """
-        Функция предназначена для поиска координат всех точек, смежных с переданной и не вычисленных ранее.
+        Функция предназначена для поиска координат всех точек, 
+        смежных с переданной и не вычисленных ранее.
         """
         self.point_coordinates[0][0] = 1
         check = np.zeros(len(self.vert_dict), dtype=int)
@@ -61,13 +67,13 @@ class Hyperbolic:
             t *= 2
             new_ans = hyperbolic.exponential_map(
                 self.point_coordinates[p1], v, t)
-            cur_dist = hyperbolic.distance_pseudo_euclidean(ans, new_ans)
+            cur_dist = hyperbolic.hyperbolic_distance(ans, new_ans)
 
             if integral + cur_dist > distance:
                 t = t / 2 + 0.0001
                 new_ans = hyperbolic.exponential_map(
                     self.point_coordinates[p1], v, t)
-                cur_dist = hyperbolic.distance_pseudo_euclidean(ans, new_ans)
+                cur_dist = hyperbolic.hyperbolic_distance(ans, new_ans)
                 integral += cur_dist
                 ans = new_ans
                 continue
@@ -80,35 +86,31 @@ class Hyperbolic:
         draw.printing(self.vert_dict, hyperbolic.projection(
             self.point_coordinates), colour)
 
+# matrix = np.array([[0, 3, 2, 5, 0, 0, 0, 0, 0, 0],
+#                    [3, 0, 0, 0, 8, 6, 0, 0, 0, 0],
+#                    [2, 0, 0, 0, 0, 0, 1, 2, 0, 0],
+#                    [5, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+#                    [0, 8, 0, 0, 0, 0, 0, 0, 0, 0],
+#                    [0, 6, 0, 0, 0, 0, 0, 0, 1, 2],
+#                    [0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
+#                    [0, 0, 2, 0, 0, 0, 0, 0, 0, 0],
+#                    [0, 0, 0, 0, 0, 1, 0, 0, 0, 0],
+#                    [0, 0, 0, 0, 0, 2, 0, 0, 0, 0]])
+# dimension = 2
 
-matrix = np.array([[0, 3, 2, 5, 0, 0, 0, 0, 0, 0],
-                   [3, 0, 0, 0, 8, 6, 0, 0, 0, 0],
-                   [2, 0, 0, 0, 0, 0, 1, 2, 0, 0],
-                   [5, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                   [0, 8, 0, 0, 0, 0, 0, 0, 0, 0],
-                   [0, 6, 0, 0, 0, 0, 0, 0, 1, 2],
-                   [0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
-                   [0, 0, 2, 0, 0, 0, 0, 0, 0, 0],
-                   [0, 0, 0, 0, 0, 1, 0, 0, 0, 0],
-                   [0, 0, 0, 0, 0, 2, 0, 0, 0, 0]])
-dimension = 2
-"""
-H0 = Hyperbolic(matrix, dimension)
-H0.print_graph('green')
-H1 = Hyperbolic(matrix, dimension)
-H1.print_graph('red')
-H2 = Hyperbolic(matrix, dimension)
-H2.print_graph('yellow')
-H3 = Hyperbolic(matrix, dimension)
-H3.print_graph('blue')
-"""
-matrix2 = np.array([[0, 5, 0, 0, 0, 0],
-                    [5, 0, 5, 0, 0, 0],
-                    [0, 5, 0, 5, 0, 0],
-                    [0, 0, 5, 0, 5, 0],
-                    [0, 0, 0, 5, 0, 5],
-                    [0, 0, 0, 0, 5, 0]])
-H = Hyperbolic(matrix2, dimension)
-H.print_graph('red')
-H = Hyperbolic(matrix2, dimension)
-H.print_graph('red')
+# H0 = Hyperbolic(matrix, dimension)
+# H0.print_graph('green')
+# H1 = Hyperbolic(matrix, dimension)
+# H1.print_graph('red')
+# H2 = Hyperbolic(matrix, dimension)
+# H2.print_graph('yellow')
+# H3 = Hyperbolic(matrix, dimension)
+# H3.print_graph('blue')
+
+
+# matrix2 = np.array([[0, 1, 1],
+#                     [1, 0, 1],
+#                     [1, 1, 0]], dtype=float)
+
+# H = Hyperbolic(graph=matrix2, dimension=2)
+# H.print_graph('blue')
