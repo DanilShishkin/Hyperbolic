@@ -35,40 +35,36 @@ def hyperbolic_distance(p1: np.array, p2: np.array) -> float:
     ищет расстояние между двумя точками в H(n)
     Необходимо передавать массивы одинаковой размерности
     """
-    return np.arccosh(-scalar_product(p1, p2))
+    inner = scalar_product(p1, p2)
+    if -inner < 1.:
+        inner = -1.
+    return np.arccosh(-inner)
 
 
 def exponential_map(start_point: np.array, v: np.array, t: float) -> np.array:
     """
-    вычисляет координаты точки. Стартовая точка - start_point, вектора направления в старотовой точке - v
+    вычисляет координаты точки. Стартовая точка - start_point, вектор направления 
+    в старотовой точке - v
     t - параметр, от которого зависит лишь расстояние между точками
     """
     nv = np.linalg.norm(v)
-    ans1 = np.cosh(nv * t) * start_point
-    ans2 = np.sinh(nv * t) / nv * v
-    return ans1 + ans2
+    return np.cosh(t) * start_point + np.sinh(t) / nv * v
 
 
 def rand_vector(point: np.array) -> np.array:
     """
     это функция должна возвращать случайный вектор,
-    который находится в касательном подпространстве в точке point_coordinates[point].
+    который находится в касательном подпространстве 
+    к точке point_coordinates[point].
     """
-    dimension = len(point) - 1
-    ans = np.zeros(dimension + 1)
-    for i in range(1, dimension + 1):
-        ans[i] = np.random.uniform(point[i] - 1, point[i] + 1)
-    x0 = 0
-    for i in range(1, dimension + 1):
-        x0 += point[i] * (ans[i] - point[i])
-    ans[0] = x0 / point[0]
-    return ans
+
+    dimension = len(point)
+    tang_vector = np.zeros(dimension)
+    tang_vector[1:] = np.random.uniform(0., 1., size=dimension - 1)
+    tang_vector[0] = sum(point[1:] * tang_vector[1:]) / point[0]
+    return tang_vector
 
 
 def projection(coordinates):
-    proj = np.zeros((len(coordinates), len(coordinates[0])))
-    for i in range(len(coordinates)):
-        for j in range(len(coordinates[0]) - 1):
-            proj[i][j] = coordinates[i][j+1] / coordinates[i][0] * 200
-            # 200 - размер графа относительно круга
-    return proj
+    return np.array([coordinates[i, 1:] / (coordinates[i, 0] + 1)
+                     for i in range(coordinates.shape[0])])

@@ -43,7 +43,7 @@ def points():
                 flag += 1
 
     print(counter, "points checked", flag, "points are wrong")
-    H.print_graph("blue")
+    H.draw()
 
 
 def distance():
@@ -84,10 +84,10 @@ def distance():
                 flag += 1
 
     print(counter, "pair checked", flag, "pairs are wrong")
-    H.print_graph("blue")
+    H.draw()
 
 
 if __name__ == '__main__':
-    # points()
-    distance()  # FIXME ЗАМЕТИЛ ТЕНДЕНЦИЮ, ЧТО РОВНО ОДНА ПАРА ТОЧЕК СЧИТАЕТСЯ ПРАВИЛЬНО. ЗАБАВНО
+    points()
+    # distance()  # FIXME ЗАМЕТИЛ ТЕНДЕНЦИЮ, ЧТО РОВНО ОДНА ПАРА ТОЧЕК СЧИТАЕТСЯ ПРАВИЛЬНО. ЗАБАВНО
     # FIXME ОЧЕНЬ РЕДКО ЧТО-ЛИБО СОВПАДАЕТ, ХОЧЕТСЯ ВЫЯСНИТЬ ПОЧЕМУ
