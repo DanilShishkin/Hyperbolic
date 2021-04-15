@@ -61,9 +61,10 @@ class Hyperbolic:
                 check[child] = 1
                 self.__recursive(child, check)
 
-    def __integral(self, p1: int, p2: int, eps=1e-6) -> np.array:
+    def __integral(self, p1: int, p2: int, eps=1e-1) -> np.array:
         """
         """
+        print(p1)
         distance = self.vert_dict[p1][p2]["weight"]
         v = hyperbolic.rand_vector(self.point_coordinates[p1])
         t = 0.0001
@@ -143,34 +144,42 @@ class Hyperbolic:
         plt.show()
 
 
-matrix = np.array([[0, 3, 2, 5, 0, 0, 0, 0, 0, 0],
-                   [3, 0, 0, 0, 8, 6, 0, 0, 0, 0],
-                   [2, 0, 0, 0, 0, 0, 1, 2, 0, 0],
-                   [5, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                   [0, 8, 0, 0, 0, 0, 0, 0, 0, 0],
-                   [0, 6, 0, 0, 0, 0, 0, 0, 1, 2],
-                   [0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
-                   [0, 0, 2, 0, 0, 0, 0, 0, 0, 0],
-                   [0, 0, 0, 0, 0, 1, 0, 0, 0, 0],
-                   [0, 0, 0, 0, 0, 2, 0, 0, 0, 0]])
-dimension = 2
+# matrix = np.array([[0, 3, 2, 5, 0, 0, 0, 0, 0, 0],
+#                    [3, 0, 0, 0, 8, 6, 0, 0, 0, 0],
+#                    [2, 0, 0, 0, 0, 0, 1, 2, 0, 0],
+#                    [5, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+#                    [0, 8, 0, 0, 0, 0, 0, 0, 0, 0],
+#                    [0, 6, 0, 0, 0, 0, 0, 0, 1, 2],
+#                    [0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
+#                    [0, 0, 2, 0, 0, 0, 0, 0, 0, 0],
+#                    [0, 0, 0, 0, 0, 1, 0, 0, 0, 0],
+#                    [0, 0, 0, 0, 0, 2, 0, 0, 0, 0]])
+# dimension = 2
 
-# H0 = Hyperbolic(matrix, dimension)
-# H0.draw()
+# matrix2 = np.array([[0, 1, 1],
+#                     [1, 0, 1],
+#                     [1, 1, 0]], dtype=float)
 
-matrix2 = np.array([[0, 1, 1],
-                    [1, 0, 1],
-                    [1, 1, 0]], dtype=float)
-# matrix2 = matrix2 / np.linalg.norm(matrix2)
+# H = Hyperbolic(graph=matrix2, dimension=2)
+# H.draw()
+# coordinates = H.point_coordinates
+# print("MSE: %f" % MSE(coordinates, matrix2))
 
-H = Hyperbolic(graph=matrix2, dimension=2)
+lst = np.array([]).reshape(0, 0)
+for i in range(100):
+    f = open(rf'data/sequence ({i}).txt', 'r')
+    string = f.read().replace("\n", "")
+    tmp = list(string.encode())
+    if i == 0:
+        lst = np.array(tmp).reshape(1, -1)
+    else:
+        lst = np.vstack((lst, np.array(tmp).reshape(1, -1)))
+# создал пустой интовый массив для расстояний
+distance = np.zeros((100, 100), dtype=float)
+# заполнил его правильными значениями
+for i in range(100):
+    for j in range(100):
+        distance[i, j] = (lst[i] != lst[j]).sum()
+print(distance)
+H = Hyperbolic(graph=distance[:10, :10], dimension=2)
 H.draw()
-coordinates = H.point_coordinates
-print("MSE: %f" % MSE(coordinates, matrix2))
-# graph = nx.read_edgelist("/home/azat/Downloads/facebook/polblogs-edgelist.txt")
-# graph.add_nodes_from(
-#     '/home/azat/Downloads/facebook/polblogs-polblogs-nodelist.txt')
-# matrix = nx.to_numpy_array(graph)
-# H = Hyperbolic(matrix[:10, :10], 2)
-# H.draw()
-# H.draw()

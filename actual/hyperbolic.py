@@ -43,12 +43,17 @@ def hyperbolic_distance(p1: np.array, p2: np.array) -> float:
 
 def exponential_map(start_point: np.array, v: np.array, t: float) -> np.array:
     """
-    вычисляет координаты точки. Стартовая точка - start_point, вектор направления 
-    в старотовой точке - v
+    вычисляет координаты точки. Стартовая точка - start_point, 
+    вектора направления в стартовой точке - v
     t - параметр, от которого зависит лишь расстояние между точками
     """
-    nv = np.linalg.norm(v)
-    return np.cosh(t) * start_point + np.sinh(t) / nv * v
+    nv = norm(v)
+    ans1 = np.array([cosh(nv * t) * p for p in start_point])
+    ans2 = np.array([sinh(nv * t) / nv * vi for vi in v])
+    # TODO сделать проекцию
+    # TODO проверить, как двигаются точки в зависимости от шага t
+    # TODO предположим, что на графе метрика
+    return ans1 + ans2
 
 
 def rand_vector(point: np.array) -> np.array:
