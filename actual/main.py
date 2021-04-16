@@ -9,12 +9,10 @@ import draw
 from grad_descent import GD, MSE
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
-import itertools
 
 
 def is_on_hyperbola(point):
-    print(-point[0]**2 + point[1]**2 + point[2]**2)
-    return -point[0]**2 + point[1]**2 + point[2]**2 == 1.
+    return -point[0]**2 + point[1]**2 + point[2]**2 == -1.
 
 
 class Hyperbolic:
@@ -38,7 +36,8 @@ class Hyperbolic:
         for vertex in range(graph.shape[0]):
             self.point_coordinates[vertex, 0] = np.sqrt(
                 1 + sum(self.point_coordinates[vertex, 1::]**2))
-        self.point_coordinates = GD(self.point_coordinates, graph, 1000)
+        self.point_coordinates = GD(
+            self.point_coordinates, graph, 1000)
 
     def __find_coordinates(self):
         """
@@ -61,11 +60,11 @@ class Hyperbolic:
                 check[child] = 1
                 self.__recursive(child, check)
 
-    def __integral(self, p1: int, p2: int, eps=1e-1) -> np.array:
+    def __integral(self, p1: int, p2: int, eps=1e-2) -> np.array:
         """
         """
-        print(p1)
         distance = self.vert_dict[p1][p2]["weight"]
+        print("Distance: %f" % distance)
         v = hyperbolic.rand_vector(self.point_coordinates[p1])
         t = 0.0001
         # вершина, от которой считаем соседнюю
@@ -99,6 +98,8 @@ class Hyperbolic:
 
         new_ans[0] = np.sqrt(1 + sum(new_ans[1:]**2))
 
+        print("New Distance: %f" %
+              np.arccosh(-hyperbolic.scalar_product(new_ans, domain_point)))
         return new_ans
 
     def print_graph(self, colour='blue'):
@@ -106,6 +107,7 @@ class Hyperbolic:
             self.point_coordinates), colour)
 
     def draw(self, draw_eges: bool = True):
+        print("drawing")
         coordinates = self.point_coordinates
         projected_coordinates = hyperbolic.projection(coordinates)
 
@@ -118,9 +120,10 @@ class Hyperbolic:
 
         fig, ax = plt.subplots(figsize=(5, 5))
 
-        ax.get_xaxis().set_visible(False)
-        ax.get_yaxis().set_visible(False)
-
+        # ax.get_xaxis().set_visible(False)
+        # ax.get_yaxis().set_visible(False)
+        # plt.xlim(0, 1)
+        # plt.ylim(0, 1)
         plt.scatter(x, y)
 
         patch = patches.Circle((0., 0.), 1., edgecolor='black', fill=False)
@@ -160,10 +163,11 @@ class Hyperbolic:
 #                     [1, 0, 1],
 #                     [1, 1, 0]], dtype=float)
 
-# H = Hyperbolic(graph=matrix2, dimension=2)
+# matrix = matrix
+# H = Hyperbolic(graph=matrix, dimension=2)
 # H.draw()
 # coordinates = H.point_coordinates
-# print("MSE: %f" % MSE(coordinates, matrix2))
+# print("MSE: %f" % MSE(coordinates, matrix))
 
 lst = np.array([]).reshape(0, 0)
 for i in range(100):
@@ -180,6 +184,11 @@ distance = np.zeros((100, 100), dtype=float)
 for i in range(100):
     for j in range(100):
         distance[i, j] = (lst[i] != lst[j]).sum()
+
+n = lst.shape[0]
+distance = distance / n
+
 print(distance)
-H = Hyperbolic(graph=distance[:10, :10], dimension=2)
-H.draw()
+H = Hyperbolic(graph=distance, dimension=5)
+print(MSE(H.point_coordinates, distance))
+H.draw(False)

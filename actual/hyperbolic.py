@@ -48,12 +48,10 @@ def exponential_map(start_point: np.array, v: np.array, t: float) -> np.array:
     t - параметр, от которого зависит лишь расстояние между точками
     """
     nv = norm(v)
-    ans1 = np.array([cosh(nv * t) * p for p in start_point])
-    ans2 = np.array([sinh(nv * t) / nv * vi for vi in v])
     # TODO сделать проекцию
     # TODO проверить, как двигаются точки в зависимости от шага t
     # TODO предположим, что на графе метрика
-    return ans1 + ans2
+    return cosh(t) * start_point + sinh(t) * v / nv
 
 
 def rand_vector(point: np.array) -> np.array:
