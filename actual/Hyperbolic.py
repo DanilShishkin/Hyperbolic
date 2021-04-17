@@ -6,8 +6,6 @@ import networkx as nx
 import numpy as np
 import hyperbolic
 from grad_descent import GD
-import matplotlib.pyplot as plt
-import matplotlib.patches as patches
 
 
 class Hyperbolic:
@@ -118,62 +116,4 @@ class Hyperbolic:
                 min_t = t
 
         ans[0] = np.sqrt(1 + sum(ans[1:]**2))
-
         return ans
-
-    def draw(self, draw_eges: bool = True, annotate: bool = False, map: dict = None):
-        """
-        Функция рисования проекции точек на диске.
-
-        Параметры:
-        __________
-        draw_edges : bool
-            Рисовать ли ребра графа.
-
-        annotate : bool
-            Нумеровать ли точки.
-
-        map : dict
-            Для окрашивания точек.
-        """
-        coordinates = self.point_coordinates
-        projected_coordinates = hyperbolic.projection(coordinates)
-
-        x = projected_coordinates[:, 0] * 100.
-        y = projected_coordinates[:, 1] * 100.
-
-        fig, ax = plt.subplots()
-
-        ax.get_xaxis().set_visible(False)
-        ax.get_yaxis().set_visible(False)
-        # plt.xlim(-1, 1)
-        # plt.ylim(-1, 1)
-        n = len(self.point_coordinates)
-
-        half_n = int(n / 2) + 1
-        for i in range(n):
-            if map[i] >= half_n:
-                plt.scatter(x[i], y[i], color='blue')
-            else:
-                plt.scatter(x[i], y[i], color='red')
-
-        patch = patches.Circle((0, 0), radius=1.,
-                               edgecolor='black', fill=False)
-        ax.add_patch(patch)
-
-        if draw_eges:
-            # отрисовка ребер графа
-            for i, p1 in enumerate(zip(x, y)):
-                for j, p2 in enumerate(zip(x, y)):
-                    if self.distances[i, j] != 0.:
-                        x_coordinates = (p1[0], p2[0])
-                        y_coordinates = (p1[1], p2[1])
-                        plt.plot(x_coordinates, y_coordinates,
-                                 color='black')
-        if annotate:
-            n = coordinates.shape[0]
-            text = range(1, n + 1)
-            for i, txt in enumerate(text):
-                # подпись к точкам
-                ax.annotate(txt, (x[i], y[i]), fontsize=12)
-        plt.show()

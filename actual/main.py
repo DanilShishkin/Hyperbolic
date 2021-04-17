@@ -6,6 +6,7 @@ import numpy as np
 import Levenshtein as Lev
 import pandas as pd
 from grad_descent import MSE
+import draw
 
 
 def is_on_hyperbola(point):
@@ -29,6 +30,7 @@ dataset = np.concatenate((positive[np.random.choice(
 perm = np.random.permutation(2*size)
 ran = np.array(range(2*size))
 map = {perm[i]: ran[i] for i in range(2*size)}
+
 dataset = dataset[perm]
 
 distance = np.zeros((2*size, 2*size), dtype=np.int32)
@@ -42,4 +44,4 @@ distance = distance / (3*size)
 H = Hyperbolic.Hyperbolic(graph=distance, dimension=2, maxiter=100, batch=0.2)
 print(MSE(H.point_coordinates, distance))
 
-H.draw(False, map=map)
+draw.draw(H.point_coordinates, False, map=map)

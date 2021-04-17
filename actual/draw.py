@@ -1,32 +1,56 @@
-from tkinter import Tk, Canvas, Frame, BOTH
+import matplotlib.pyplot as plt
+import matplotlib.patches as patches
+import numpy as np
+from hyperbolic import projection
 
 
-class Example(Frame):
+def draw(coordinates: np.array, draw_eges: bool = True,
+         annotate: bool = False, map: dict = None):
+    """
+    Функция рисования проекций точек на диске Пуанкаре.
 
-    def __init__(self, vert_dict, point_coordinates, colour):
-        super().__init__()
-        self.initUI(vert_dict, point_coordinates, colour)
+    Параметры:
+    __________
+    coordinates : np.array
+        Координаты точек в H(n)
 
-    def initUI(self, vert_dict, coord, colour):
-        self.pack(fill=BOTH, expand=1)
+    draw_edges : bool
+        Рисовать ли ребра графа.
 
-        canvas = Canvas(self)
-        canvas.create_oval(0, 800, 800, 0)
-        for i in range(len(coord)):
-            canvas.create_oval(
-                400 + coord[i][0] - 5, 400 + coord[i][1] +
-                5, 400 + coord[i][0] + 5, 400 + coord[i][1] - 5,
-                outline=colour, fill=colour, width=1
-            )
-        # for current in vert_dict:
-        #     for child in vert_dict[current]:
-        #         canvas.create_line(400 + coord[current][0], 400 + coord[current][1],
-        #                            400 + coord[child][0], 400 + coord[child][1])
-        canvas.pack(fill=BOTH, expand=1)
+    annotate : bool
+        Нумеровать ли точки.
 
+    map : dict
+        Для окрашивания точек.
+    """
+    projected_coordinates = projection(coordinates)
 
-def printing(vert_dict, point_coordinates, colour):
-    root = Tk()
-    ex = Example(vert_dict, point_coordinates, colour)
-    root.geometry("400x100+300+300")
-    root.mainloop()
+    x = projected_coordinates[:, 0] * 100.
+    y = projected_coordinates[:, 1] * 100.
+
+    fig, ax = plt.subplots()
+
+    ax.get_xaxis().set_visible(False)
+    ax.get_yaxis().set_visible(False)
+    # plt.xlim(-1, 1)
+    # plt.ylim(-1, 1)
+    n = len(coordinates)
+
+    half_n = int(n / 2) + 1
+    for i in range(n):
+        if map[i] >= half_n:
+            plt.scatter(x[i], y[i], color='blue')
+        else:
+            plt.scatter(x[i], y[i], color='red')
+
+    patch = patches.Circle((0, 0), radius=1.,
+                           edgecolor='black', fill=False)
+    ax.add_patch(patch)
+
+    if annotate:
+        n = coordinates.shape[0]
+        text = range(1, n + 1)
+        for i, txt in enumerate(text):
+            # подпись к точкам
+            ax.annotate(txt, (x[i], y[i]), fontsize=12)
+    plt.show()
