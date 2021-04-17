@@ -12,14 +12,14 @@ def points():
     тестирует принадлежность точки гиперболоиду
     """
     NUM_OF_TESTS = 1
-    MIN_NUM_OF_POINT = 100
-    MAX_NUM_OF_POINTS = 100
+    MIN_NUM_OF_POINT = 50
+    MAX_NUM_OF_POINTS = 50
     MIN_DIMENSION = 3
     MAX_DIMENSION = 3
     # FIXME СТРАННО, НО В КАКИХ-ТО СЛУЧАЯХ ЕСТЬ ОШИБКИ. НУЖНО ВЫЯСНИТЬ ПОЧЕМУ
     MAX_POINT_ERROR = 2
-    MIN_DISTANCE = 1
-    MAX_DISTANCE = 20
+    MIN_DISTANCE = 0.
+    MAX_DISTANCE = 1.
     flag = 0
     counter = 0
     for test in range(NUM_OF_TESTS):
@@ -33,6 +33,7 @@ def points():
         dimension = np.random.randint(
             MIN_DIMENSION, MAX_DIMENSION + 1, size=1, dtype=int)
         dimension = dimension[0]
+        matrix = matrix / MAX_NUM_OF_POINTS
         H = main.Hyperbolic(matrix, dimension)
         for point in H.point_coordinates:
             counter += 1
@@ -43,7 +44,7 @@ def points():
                 flag += 1
 
     print(counter, "points checked", flag, "points are wrong")
-    H.draw()
+    H.draw(False)
 
 
 def distance():

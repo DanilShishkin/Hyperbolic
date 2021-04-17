@@ -1,194 +1,45 @@
 """
 главная функци с классом Hyperbolic
 """
-
-import networkx as nx
+import Hyperbolic
 import numpy as np
-import hyperbolic
-import draw
-from grad_descent import GD, MSE
-import matplotlib.pyplot as plt
-import matplotlib.patches as patches
+import Levenshtein as Lev
+import pandas as pd
+from grad_descent import MSE
 
 
 def is_on_hyperbola(point):
     return -point[0]**2 + point[1]**2 + point[2]**2 == -1.
 
 
-class Hyperbolic:
-    """
-    Класс для работы с гиперболическим пространством.
-    На данный момент не имеет публичных методов, кроме конструктора.
-    """
+positive = np.array(pd.read_csv(
+    r'positive.csv', sep=';', usecols=[3], names=['text']))
+negative = np.array(pd.read_csv(
+    r'negative.csv', sep=';', usecols=[3], names=['text']))
 
-    def __init__(self, graph: np.ndarray, dimension: int):
-        """
-        Конструктор класса
-        Создаёт поле с координатами точек point_coordinates, которое заполнится
-        в конце работы конструктора
-        так же создаёт словарь связей координат для удобства работы
-        """
-        self.dimension = dimension
-        self.point_coordinates = np.zeros((len(graph), self.dimension + 1))
-        self.vert_dict = nx.from_numpy_array(graph)
-        self.distances = graph
-        self.__find_coordinates()  # изменяет координаты точек на гиперболоиде
-        for vertex in range(graph.shape[0]):
-            self.point_coordinates[vertex, 0] = np.sqrt(
-                1 + sum(self.point_coordinates[vertex, 1::]**2))
-        self.point_coordinates = GD(
-            self.point_coordinates, graph, 1000)
+# positive_90 = np.array(
+#     positive[positive['text'].apply(lambda text: len(text) == 90)])
+# negative_90 = np.array(
+#     negative[negative['text'].apply(lambda text: len(text) == 90)])
 
-    def __find_coordinates(self):
-        """
-        Функция предназначена для поиска координат всех точек,
-        смежных с переданной и не вычисленных ранее.
-        """
-        self.point_coordinates[0][0] = 1
-        check = np.zeros(len(self.vert_dict), dtype=int)
-        check[0] = 1
-        self.__recursive(0, check)
+size = 100
+dataset = np.concatenate((positive[np.random.choice(
+    len(positive), size)], negative[np.random.choice(len(negative), size)]))
 
-    def __recursive(self, current: int, check: np.array):
-        """
-        обход графа в глубину с проверкой на то, что точка уже не вычислена
-        в ходе работы записывает вычисленные координаты в массив координат
-        """
-        for child in self.vert_dict[current]:
-            if not check[child]:
-                self.point_coordinates[child] = self.__integral(current, child)
-                check[child] = 1
-                self.__recursive(child, check)
+perm = np.random.permutation(2*size)
+ran = np.array(range(2*size))
+map = {perm[i]: ran[i] for i in range(2*size)}
+dataset = dataset[perm]
 
-    def __integral(self, p1: int, p2: int, eps=1e-2) -> np.array:
-        """
-        """
-        distance = self.vert_dict[p1][p2]["weight"]
-        print("Distance: %f" % distance)
-        v = hyperbolic.rand_vector(self.point_coordinates[p1])
-        t = 0.0001
-        # вершина, от которой считаем соседнюю
-        domain_point = self.point_coordinates[p1]
-        cur_dist = 0.
+distance = np.zeros((2*size, 2*size), dtype=np.int32)
 
-        while cur_dist <= distance:
-            t *= 2
-            new_ans = hyperbolic.exponential_map(
-                domain_point, v, t)
-            cur_dist = hyperbolic.hyperbolic_distance(
-                domain_point, new_ans)
+for i in range(2*size):
+    for j in range(2*size):
+        distance[i, j] = Lev.distance(dataset[i, 0], dataset[j, 0])
 
-        max_t = t
-        min_t = t / 2
+distance = distance / (3*size)
 
-        if abs(cur_dist - distance) < eps:
-            return new_ans
-
-        while abs(cur_dist - distance) > eps:
-            t = (max_t + min_t) / 2.
-            new_ans = hyperbolic.exponential_map(
-                domain_point, v, t)
-            cur_dist = hyperbolic.hyperbolic_distance(
-                domain_point, new_ans)
-
-            if cur_dist > distance:
-                max_t = t
-            elif cur_dist <= distance:
-                min_t = t
-
-        new_ans[0] = np.sqrt(1 + sum(new_ans[1:]**2))
-
-        print("New Distance: %f" %
-              np.arccosh(-hyperbolic.scalar_product(new_ans, domain_point)))
-        return new_ans
-
-    def print_graph(self, colour='blue'):
-        draw.printing(self.vert_dict, hyperbolic.projection(
-            self.point_coordinates), colour)
-
-    def draw(self, draw_eges: bool = True):
-        print("drawing")
-        coordinates = self.point_coordinates
-        projected_coordinates = hyperbolic.projection(coordinates)
-
-        x = projected_coordinates[:, 0]
-        y = projected_coordinates[:, 1]
-
-        # нормировка точек
-        # x = x / np.linalg.norm(x)
-        # y = y / np.linalg.norm(y)
-
-        fig, ax = plt.subplots(figsize=(5, 5))
-
-        # ax.get_xaxis().set_visible(False)
-        # ax.get_yaxis().set_visible(False)
-        # plt.xlim(0, 1)
-        # plt.ylim(0, 1)
-        plt.scatter(x, y)
-
-        patch = patches.Circle((0., 0.), 1., edgecolor='black', fill=False)
-        ax.add_patch(patch)
-
-        if draw_eges:
-            # отрисовка ребер графа
-            for i, p1 in enumerate(zip(x, y)):
-                for j, p2 in enumerate(zip(x, y)):
-                    if self.distances[i, j] != 0.:
-                        x_coordinates = (p1[0], p2[0])
-                        y_coordinates = (p1[1], p2[1])
-                        plt.plot(x_coordinates, y_coordinates,
-                                 color='black')
-
-        n = coordinates.shape[0]
-        text = range(1, n + 1)
-        for i, txt in enumerate(text):
-            # подпись к точкам
-            ax.annotate(txt, (x[i], y[i]), fontsize=12)
-        plt.show()
-
-
-# matrix = np.array([[0, 3, 2, 5, 0, 0, 0, 0, 0, 0],
-#                    [3, 0, 0, 0, 8, 6, 0, 0, 0, 0],
-#                    [2, 0, 0, 0, 0, 0, 1, 2, 0, 0],
-#                    [5, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-#                    [0, 8, 0, 0, 0, 0, 0, 0, 0, 0],
-#                    [0, 6, 0, 0, 0, 0, 0, 0, 1, 2],
-#                    [0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
-#                    [0, 0, 2, 0, 0, 0, 0, 0, 0, 0],
-#                    [0, 0, 0, 0, 0, 1, 0, 0, 0, 0],
-#                    [0, 0, 0, 0, 0, 2, 0, 0, 0, 0]])
-# dimension = 2
-
-# matrix2 = np.array([[0, 1, 1],
-#                     [1, 0, 1],
-#                     [1, 1, 0]], dtype=float)
-
-# matrix = matrix
-# H = Hyperbolic(graph=matrix, dimension=2)
-# H.draw()
-# coordinates = H.point_coordinates
-# print("MSE: %f" % MSE(coordinates, matrix))
-
-lst = np.array([]).reshape(0, 0)
-for i in range(100):
-    f = open(rf'data/sequence ({i}).txt', 'r')
-    string = f.read().replace("\n", "")
-    tmp = list(string.encode())
-    if i == 0:
-        lst = np.array(tmp).reshape(1, -1)
-    else:
-        lst = np.vstack((lst, np.array(tmp).reshape(1, -1)))
-# создал пустой интовый массив для расстояний
-distance = np.zeros((100, 100), dtype=float)
-# заполнил его правильными значениями
-for i in range(100):
-    for j in range(100):
-        distance[i, j] = (lst[i] != lst[j]).sum()
-
-n = lst.shape[0]
-distance = distance / n
-
-print(distance)
-H = Hyperbolic(graph=distance, dimension=5)
+H = Hyperbolic.Hyperbolic(graph=distance, dimension=2, maxiter=100, batch=0.2)
 print(MSE(H.point_coordinates, distance))
-H.draw(False)
+
+H.draw(False, map=map)
