@@ -90,30 +90,30 @@ class Hyperbolic:
         domain_point = self.point_coordinates[p1]
         cur_dist = 0.
         ans = hyperbolic.exponential_map(domain_point, v, t)
-        while cur_dist <= distance:
-            t *= 2
-            ans = hyperbolic.exponential_map(
-                domain_point, v, t)
-            cur_dist = hyperbolic.hyperbolic_distance(
-                domain_point, ans)
+        # while cur_dist <= distance:
+        #     t *= 2
+        #     ans = hyperbolic.exponential_map(
+        #         domain_point, v, t)
+        #     cur_dist = hyperbolic.hyperbolic_distance(
+        #         domain_point, ans)
 
-        max_t = t
-        min_t = t / 2
+        # max_t = t
+        # min_t = t / 2
 
-        if abs(cur_dist - distance) < eps:
-            return ans
+        # if abs(cur_dist - distance) < eps:
+        #     return ans
 
-        while abs(cur_dist - distance) > eps:
-            t = (max_t + min_t) / 2.
-            ans = hyperbolic.exponential_map(
-                domain_point, v, t)
-            cur_dist = hyperbolic.hyperbolic_distance(
-                domain_point, ans)
+        # while abs(cur_dist - distance) > eps:
+        #     t = (max_t + min_t) / 2.
+        #     ans = hyperbolic.exponential_map(
+        #         domain_point, v, t)
+        #     cur_dist = hyperbolic.hyperbolic_distance(
+        #         domain_point, ans)
 
-            if cur_dist > distance:
-                max_t = t
-            elif cur_dist <= distance:
-                min_t = t
+        #     if cur_dist > distance:
+        #         max_t = t
+        #     elif cur_dist <= distance:
+        #         min_t = t
 
         ans[0] = np.sqrt(1 + sum(ans[1:]**2))
         return ans
