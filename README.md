@@ -38,3 +38,4 @@ draw(coordinates = H.point_coordinates, distances=distance, draw_edges=False)
 # Пример отрисовки вложенного графа на диске Пуанкаре
 
 ![twitter_sgd](/actual/twitter_200_sgd.pdf)
+Format : ![Alt Text](url)
