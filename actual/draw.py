@@ -14,6 +14,9 @@ def draw(coordinates: np.array, distances: np.array, draw_edges: bool = True,
     coordinates : np.array
         Координаты точек в H(n)
 
+    distances : np.array shape = (n, n)
+        Матрица смежности графа
+
     draw_edges : bool
         Рисовать ли ребра графа.
 
@@ -22,6 +25,7 @@ def draw(coordinates: np.array, distances: np.array, draw_edges: bool = True,
 
     map : dict
         Для окрашивания точек.
+
     """
     projected_coordinates = projection(coordinates)
 
@@ -53,7 +57,7 @@ def draw(coordinates: np.array, distances: np.array, draw_edges: bool = True,
                     x_coordinates = (p1[0], p2[0])
                     y_coordinates = (p1[1], p2[1])
                     plt.plot(x_coordinates, y_coordinates,
-                             color='black')
+                             color='black', alpha=0.05)
 
     patch = patches.Circle((0, 0), radius=1.,
                            edgecolor='black', fill=False)

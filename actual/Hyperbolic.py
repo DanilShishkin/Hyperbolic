@@ -90,6 +90,7 @@ class Hyperbolic:
         domain_point = self.point_coordinates[p1]
         cur_dist = 0.
         ans = hyperbolic.exponential_map(domain_point, v, t)
+
         # while cur_dist <= distance:
         #     t *= 2
         #     ans = hyperbolic.exponential_map(
