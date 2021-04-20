@@ -18,7 +18,7 @@
 Так же можно написать самостоятельно отрисовку графа. Для этого необходимо проецировать точки из гиперболического пространства на диск Пуанкаре. Для этого в модуле **hyperbolic** есть функция *projection*, в нее передаются координаты точек на гиперболоиде (метод *point_coordinates* класса Hyperbolic возвращает эти координаты).
 *hyperbolic.projection* возвращает *np.array* размера (n, dimension).
 
-## Посчет ошибки
+## Вычисление ошибки вложения
 Для подсчета среднеквадратичной ошибки вложения графа от исходных расстояний между вершинами можно использовать функцию *MSE* из модуля **grad_descent**. Параметры *MSE*:
 * points - np.array, shape = (n, distance+1) координаты вершин во вложении
 * distance - np.array, shape = (n, n) матрица смежности 
@@ -35,3 +35,6 @@ H = Hyperbolic(graph=distance, dimension=2, maxiter=1000, batch=0.1)
 # Без построения ребер графа
 draw(coordinates = H.point_coordinates, distances=distance, draw_edges=False)
 ```
+# Пример отрисовки вложенного графа на диске Пуанкаре
+
+![twitter_sgd](/actual/twitter_200_sgd.pdf)
