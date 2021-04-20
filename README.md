@@ -21,7 +21,7 @@
 ## Посчет ошибки
 Для подсчета среднеквадратичной ошибки вложения графа от исходных расстояний между вершинами можно использовать функцию *MSE* из модуля **grad_descent**. Параметры *MSE*:
 * points - np.array, shape = (n, distance+1) координаты вершин во вложении
-* distance - np.array, shape = (n, n)матрица смежности 
+* distance - np.array, shape = (n, n) матрица смежности 
 # Пример использования
 ```python
 from Hyperbolic import Hyperbolic
