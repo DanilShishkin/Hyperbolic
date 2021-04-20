@@ -13,8 +13,10 @@
 * map - словарь : {номер точки при пересавлении ее номера -> номер в изначальном графе}.
 
 # Пример использования
+```python
 from Hyperbolic import Hyperbolic
 import draw
 distance = np.array(size=(n, n)) # матрица смежности 
 #
 H = Hyperbolic(graph=distance, dimension=2, maxiter=1000, batch=0.1) 
+```
